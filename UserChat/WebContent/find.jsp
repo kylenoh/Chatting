@@ -2,6 +2,18 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+<%
+		String userID = null;
+		if(session.getAttribute("userID") != null){
+			userID = (String) session.getAttribute("userID");
+		}
+		if(userID == null){
+			session.setAttribute("messageType", "오류 메시지");
+			session.setAttribute("messageContent", "현재 로그인이 되어있지 않습니다.");
+			response.sendRedirect("index.jsp");
+			return;
+		}
+	%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,20 +22,71 @@
 <title>JSP 실시간 회원제 채팅 서비스</title>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript">
+	function findFunction(){
+		var userID = $('#findID').val();
+		$.ajax({
+			type:"POST",
+			url:'./UserRegisterCheckServlet',
+			data:{userID:userID},
+			success:function(result){
+				if(result==0){
+					$('#checkMessage').html('친구찾기에 성공했습니다.');
+					$('#checkType').attr('class','modal-content panel-success');
+					getFriend(userID);
+				}else{
+					$('#checkMessage').html('친구를 찾을 수 없습니다.');
+					$('#checkType').attr('class','modal-content panel-warning');
+					failFriend(userID);
+				}
+				$('#checkModal').modal("show");
+			}
+		});
+	}
+	function getFriend(findID){
+		$('#friendResult').html('<thead>'+
+			'<tr>'+		
+			'<th><h4>검색결과</h4></th>'+		
+			'</tr>'+		
+			'<thead>'+		
+			'<tbody>'+		
+			'<tr>'+		
+			'<td style="text-align:center;"><h3>'+findID+'</h3><a href="chat.jsp?toID='+encodeURIComponent(findID)+' "class="btn btn-primary pull-right">'+'메시지 보내기</a></td>'+		
+			'</tr>'+		
+			'</tbody>'	
+		);
+	}
+	function failFriend(){
+		$('#friendResult').html('');
+	}
+	function getUnread(){
+		$.ajax({
+			type:"POST",
+			url:"./chatUnread",
+			data:{
+				userID:encodeURIComponent('<%=userID%>'),
+			},
+			success : function(result) {
+				if (result >= 1) {
+					showUnread(result);
+				} else {
+					showUnread('');
+				}
+			}
+		});
+	}
+	function getInfiniteUnread() {
+		setInterval(function() {
+			getUnread();
+		}, 4000);
+	}
+	function showUnread(result) {
+		$('#unread').html(result);
+	}
+</script>
 </head>
 <body>
-	<%
-		String userID = null;
-		if(session.getAttribute("userID") != null){
-			userID = (String) session.getAttribute("userID");
-		}
-		if(userID != null){
-			session.setAttribute("messageType", "오류 메시지");
-			session.setAttribute("messageContent", "현재 로그인이 되어있는 상태 입니다.");
-			response.sendRedirect("index.jsp");
-			return;
-		}
-	%>
+	
 	<nav class="navbar navbar-default">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -35,54 +98,49 @@
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li><a href="index.jsp">메인</a>
-				<li><a href="find.jsp">친구찾기</a>
+				<li ><a href="index.jsp">메인</a>
+				<li class="active"><a href="find.jsp">친구찾기</a>
+				<li><a href="box.jsp">메시지함<span id="unread"	 class="label label-info"></span></a>
 			</ul>			
-			<%
-				if(userID == null){
-			%>
+
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">접속하기<span class="caret"></span></a>
-					<ul class="dropdown-menu">				
-						<li class="active"><a href="login.jsp">로그인</a></li>
-						<li><a href="join.jsp">회원가입</a></li>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">회원관리<span class="caret"></span></a>
+					<ul class="dropdown-menu">			
+						<li><a href="update.jsp">회원정보수정</a></li>	
+						<li><a href="logoutAction.jsp">로그아웃</a></li>
 					</ul>
 				</li>
 			</ul>
-			<%
-				} 
-			%>			
+			
 		</div>
 	</nav>
 	
 	<div class="container">
-		<form method="post" action="./userLogin">
-			<table class="table table-bordered table-hover" style="text-align:center; border:1px solid #dddddd;">
-				<thead>
-					<tr>
-						<th colspan="2"><h4>로그인 양식</h4></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td style="width:110px;"><h5>아이디</h5></td>
-						<td><input class="form-control" type="text" name="userID" maxlength="20" placeholder="아이디를 입력하세요"></td>
-					</tr>
-					<tr>
-						<td style="width:110px;"><h5>비밀번호</h5></td>
-						<td><input class="form-control" type="password" name="userPassword" maxlength="20" placeholder="비밀번호를 입력하세요"></td>
-					</tr>
-					<tr>
-						<td style="text-align: left;" colspan="2"><input class="btn btn-primary pull-right" type="submit" value="로그인"></td>
-					</tr>
-				</tbody>
-			</table>
-		</form>
+		<table class="table table-bordered table-hover" style="text-align:center; border:1px solid #dddddd;">
+			<thead>
+				<tr>
+					 <th colspan="2"><h4>검색으로 친구찾기</h4></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="width:110px;"><h5>친구 아이디</h5></td>
+					<td>
+						<input class="form-control" type="text" id="findID" maxlength="20" placeholder="찾을 아이디를 입력하세요">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><button class="btn btn-primary pull-right" onclick="findFunction();">검색</button></td>
+				</tr>
+			</tbody>		
+		</table>
+	</div>
+	<div class="container">
+		<table id="friendResult" class="table table-bordered table-hover" style="text-align:center; border:1px solid #dddddd;"></table>
 	</div>
 	
-	
-	<%
+		<%
 		String messageContent = null;
 		if(session.getAttribute("messageContent")!= null){
 			messageContent = (String)session.getAttribute("messageContent");	
@@ -146,5 +204,17 @@
 				</div>
 			</div>
 		</div>
+		<%
+			if(userID != null){
+		%>
+			<script type="text/javascript">
+				$(document).ready(function() {
+					getUnread();
+					getInfiniteUnread();
+				});
+			</script>
+		<%
+			}
+		%>
 </body>
 </html>

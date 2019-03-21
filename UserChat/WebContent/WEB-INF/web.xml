@@ -11,13 +11,12 @@
   </welcome-file-list>
   <servlet>
     <servlet-name>UserRegisterServlet</servlet-name>
-    <servlet-class>chat.user.UserRegisterServlet</servlet-class>
+    <servlet-class>chat.chat.UserRegisterServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>UserRegisterServlet</servlet-name>
     <url-pattern>/userRegister</url-pattern>
   </servlet-mapping>
-  
   <servlet>
     <servlet-name>ChatSubmitServlet</servlet-name>
     <servlet-class>chat.chat.ChatSubmitServlet</servlet-class>
@@ -26,13 +25,36 @@
     <servlet-name>ChatSubmitServlet</servlet-name>
     <url-pattern>/chatSubmitServlet</url-pattern>
   </servlet-mapping>
-  
-    <servlet>
+  <servlet>
+    <servlet-name>ChatListServlet</servlet-name>
+    <servlet-class>chat.chat.ChatListServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChatListServlet</servlet-name>
+    <url-pattern>/chatListServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
     <servlet-name>UserLoginServlet</servlet-name>
     <servlet-class>chat.user.UserLoginServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>UserLoginServlet</servlet-name>
     <url-pattern>/userLogin</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>ChatUnreadServlet</servlet-name>
+    <servlet-class>chat.chat.ChatUnreadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChatUnreadServlet</servlet-name>
+    <url-pattern>/chatUnread</url-pattern>
+  </servlet-mapping>
+    <servlet>
+    <servlet-name>ChatBoxServlet</servlet-name>
+    <servlet-class>chat.chat.ChatBoxServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChatBoxServlet</servlet-name>
+    <url-pattern>/chatBox</url-pattern>
   </servlet-mapping>
 </web-app>

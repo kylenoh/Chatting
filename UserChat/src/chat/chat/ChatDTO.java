@@ -7,18 +7,20 @@ public class ChatDTO {
 	private String toID;
 	private String chatContent;
 	private String chatTime;
+	private int chatRead;
 	
 	public ChatDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ChatDTO(int chatID, String fromID, String toID, String chatContent, String chatTime) {
+	public ChatDTO(int chatID, String fromID, String toID, String chatContent, String chatTime, int chatRead) {
 		super();
 		this.chatID = chatID;
 		this.fromID = fromID;
 		this.toID = toID;
 		this.chatContent = chatContent;
 		this.chatTime = chatTime;
+		this.chatRead = chatRead;
 	}
 
 	public int getChatID() {
@@ -60,6 +62,14 @@ public class ChatDTO {
 	public void setChatTime(String chatTime) {
 		this.chatTime = chatTime;
 	}
-	
+
+	public int getChatRead() {
+		return chatRead;
+	}
+
+	public void setChatRead(int chatRead) {
+		this.chatRead = chatRead;
+	}
+
 	
 }

@@ -86,4 +86,31 @@ public class UserDAO {
 		}
 		return -1;	//데이터 베이스 오류
 	}
+	
+	public UserDTO getUser(String userID){
+		UserDTO user = new UserDTO();
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String SQL = "select * from Chatuser where userID = ?";
+		try {
+			con = DBManager.connect();
+			pstmt = con.prepareStatement(SQL);
+			pstmt.setString(1, userID);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				user.setUserID(userID);
+				user.setUserPassword(rs.getString("userPassword"));
+				user.setUserAge(rs.getInt("userAge"));
+				user.setUserGender(rs.getString("userGender"));
+				user.setUserEmail(rs.getString("userEmail"));
+				user.setUserProfile(rs.getString("userProfile"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			DBManager.close(con, pstmt, rs);
+		}
+		return user;	//데이터 베이스 오류
+	}
 }

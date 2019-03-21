@@ -97,6 +97,63 @@
 		</div>
 	</nav>
 	
+	<div class="container">
+		<form method="post" action="./userUpdate">
+			<table class="table table-bordered table-hover" style="text-align:center; border:1px solid #dddddd;">
+				<thead>
+					<tr>
+						<th colspan="2"><h4>회원 정보수정 양식</h4></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="width:110px;"><h5>아이디</h5></td>
+						<td><h5><%=user.getUserID() %></h5>
+						<input type="hidden" name="userID" value="<%=user.getUserID() %>"></td>
+					</tr>
+					<tr>
+						<td style="width:110px;"><h5>비밀번호</h5></td>
+						<td colspan="2"><input class="form-control" onkeyup="passwordCheckFunction();" type="password" id="userPassword1" name="userPassword1" maxlength="20" placeholder="비밀번호를 입력하세요"></td>
+					</tr>
+					<tr>
+						<td style="width:110px;"><h5>비밀번호 확인</h5></td>
+						<td colspan="2"><input class="form-control" onkeyup="passwordCheckFunction();" type="password" id="userPassword2" name="userPassword2" maxlength="20" placeholder="비밀번호 확인을 입력하세요"></td>
+					</tr>
+					<tr>
+						<td style="width:110px;"><h5>이름</h5></td>
+						<td colspan="2"><input class="form-control" type="text" id="userName" name="userName" maxlength="20" placeholder="이름을 입력하세요" value="<%=user.getUserName() %>"></td>
+					</tr>
+					<tr>
+						<td style="width:110px;"><h5>나이</h5></td>
+						<td colspan="2"><input class="form-control" type="number" id="userAge" name="userAge" maxlength="20" placeholder="나이를 입력하세요" value="<%=user.getUserAge() %>"></td>
+					</tr>
+					<tr>
+						<td style="width:110px;"><h5>성별</h5></td>
+						<td colspan="2">
+							<div class="form-group" style="text-align:center; margin:0 auto;">
+								<div class="btn-group" data-toggle="buttons">
+									<label class="btn btn-primary active">
+										<input type="radio" name="userGender" autocomplete="off" value="남자" <% if(user.getUserGender().equals("남자")) out.print("checked"); %>>남자
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="userGender" autocomplete="off" value="여자" <% if(user.getUserGender().equals("여자")) out.print("checked"); %>>여자
+									</label>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td style="width:110px;"><h5>이메일</h5></td>
+						<td colspan="2"><input class="form-control" type="email" id="userEmail" name="userEmail" maxlength="20" placeholder="이메일을 입력하세요" value="<%=user.getUserEmail() %>"></td>
+					</tr>
+					<tr>
+						<td style="text-align:left;" colspan="3"><h5 style="color:red;" id="passwordCheckMessage"></h5><input class="btn btn-primary pull-right" type="submit" value="수정"></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	
 	
 	
 		<%
