@@ -11,7 +11,7 @@
   </welcome-file-list>
   <servlet>
     <servlet-name>UserRegisterServlet</servlet-name>
-    <servlet-class>chat.chat.UserRegisterServlet</servlet-class>
+    <servlet-class>chat.user.UserRegisterServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>UserRegisterServlet</servlet-name>
@@ -56,5 +56,21 @@
   <servlet-mapping>
     <servlet-name>ChatBoxServlet</servlet-name>
     <url-pattern>/chatBox</url-pattern>
+  </servlet-mapping>
+   <servlet>
+    <servlet-name>UserUpdateServlet</servlet-name>
+    <servlet-class>chat.user.UserUpdateServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserUpdateServlet</servlet-name>
+    <url-pattern>/userUpdate</url-pattern>
+  </servlet-mapping>
+   <servlet>
+    <servlet-name>UserProfileServlet</servlet-name>
+    <servlet-class>chat.user.UserProfileServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserProfileServlet</servlet-name>
+    <url-pattern>/userProfile</url-pattern>
   </servlet-mapping>
 </web-app>

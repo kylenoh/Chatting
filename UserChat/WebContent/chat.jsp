@@ -1,6 +1,8 @@
+<%@page import="chat.user.UserDAO"%>
 <%@page import="java.net.URLDecoder"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="chat.user.UserDAO" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,6 +33,8 @@
 			response.sendRedirect("index.jsp");
 			return;
 		}
+		String fromProfile = new UserDAO().getProfile(userID);
+		String toProfile = new UserDAO().getProfile(toID);
 	%>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -61,11 +65,11 @@
 			},
 			success: function(result){
 				if (result==1) {
-					autoClosingAlert('#successMessage',2000);
+					autoClosingAlert('#successMessage',1000);
 				}else if (result ==0) {
-					autoClosingAlert('#dangerMessage',2000);
+					autoClosingAlert('#dangerMessage',1000);
 				}else{
-					autoClosingAlert('#warningMessage',2000);
+					autoClosingAlert('#warningMessage',1000);
 				}
 			}
 		});
@@ -91,9 +95,7 @@
 				for (var i = 0; i < result.length; i++) {
 					if (result[i][0].value==fromID) {
 						result[i][0].value= '나';
-						
 					}
-					
 					addChat(result[i][0].value,result[i][2].value,result[i][3].value);
 				}
 				lastID =Number(parsed.last);
@@ -101,33 +103,57 @@
 		});
 	}
 	function addChat(chatName,chatContent,chatTime){
-		$('#chatList').append('<div class="row">'+
-		'<div class="col-lg-12">'+
-		'<div class="media">'+
-		'<a class="pull-left" href="#">'+
-		'<img class="media-object img-circle" style="width:30px; height:30px;" src="images/icon.jpg" alt="">'+
-		'</a>'+
-		'<div class="media-body">'+
-		'<h4 class="media-heading">'+
-		chatName+
-		'<span class="small pull-right">'+
-		chatTime+
-		'</span>'+
-		'</h4>'+
-		'<p>'+
-		chatContent+
-		'</p>'+
-		'</div>'+
-		'</div>'+
-		'</div>'+
-		'</div>'+
-		'<hr>');
+		if (chatName == '나') {
+			$('#chatList').append('<div class="row">'+
+					'<div class="col-lg-12">'+
+					'<div class="media">'+
+					'<a class="pull-left" href="#">'+
+					'<img class="media-object img-circle" style="width:30px; height:30px;" src="<%= fromProfile %>" alt="">'+
+					'</a>'+
+					'<div class="media-body">'+
+					'<h4 class="media-heading">'+
+					chatName+
+					'<span class="small pull-right">'+
+					chatTime+
+					'</span>'+
+					'</h4>'+
+					'<p>'+
+					chatContent+
+					'</p>'+
+					'</div>'+
+					'</div>'+
+					'</div>'+
+					'</div>'+
+					'<hr>');	
+		}else{
+			$('#chatList').append('<div class="row">'+
+					'<div class="col-lg-12">'+
+					'<div class="media">'+
+					'<a class="pull-left" href="#">'+
+					'<img class="media-object img-circle" style="width:30px; height:30px;" src="<%= toProfile %>" alt="">'+
+					'</a>'+
+					'<div class="media-body">'+
+					'<h4 class="media-heading">'+
+					chatName+
+					'<span class="small pull-right">'+
+					chatTime+
+					'</span>'+
+					'</h4>'+
+					'<p>'+
+					chatContent+
+					'</p>'+
+					'</div>'+
+					'</div>'+
+					'</div>'+
+					'</div>'+
+					'<hr>');
+		}
 	$('#chatList').scrollTop($('#chatList')[0].scrollHeight);
 	}
 	function getInfiniteChat(){
 		setInterval(function(){
 			chatListFunction(lastID);
-		},3000);
+		},1000);
 	}
 	function getUnread(){
 		$.ajax({
@@ -148,7 +174,7 @@
 	function getInfiniteUnread() {
 		setInterval(function() {
 			getUnread();
-		}, 4000);
+		}, 2000);
 	}
 	function showUnread(result) {
 		$('#unread').html(result);
@@ -179,6 +205,7 @@
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">회원관리<span class="caret"></span></a>
 					<ul class="dropdown-menu">				
 						<li><a href="update.jsp">회원정보수정</a></li>
+						<li><a href="profileUpdate.jsp">프로필수정</a></li>
 						<li><a href="logoutAction.jsp">로그아웃</a></li>
 					</ul>
 				</li>
@@ -241,7 +268,7 @@
 					<div class="modal-content <%if(messageType.equals("오류 메시지"))out.println("panel-warning");else out.println("panel-success");%>" >
 						<div class="modal-header panel-heading">
 							<button type="button" class="close" data-dismiss="modal">
-								<span aria-hidden="true">&times</span>
+								<span aria-hidden="true">&times;</span>
 								<span class="sr-only">Close</span>
 							</button>
 							<h4 class="modal-title">

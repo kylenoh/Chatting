@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import ="chat.user.UserDAO" %>
+<%@ page import ="chat.user.UserDTO" %>
 <!DOCTYPE html>
 <html>
 <%
@@ -7,6 +9,13 @@
 	if (session.getAttribute("userID") != null) {
 		userID = (String) session.getAttribute("userID");
 	}
+	if(userID == null){
+		session.setAttribute("messageType", "오류 메시지");
+		session.setAttribute("messageContent", "현재 로그인이 되어 있지 않습니다.");
+		response.sendRedirect("index.jsp");
+		return;
+	}
+	UserDTO user = new UserDAO().getUser(userID);
 %>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -37,10 +46,19 @@
 	function getInfiniteUnread() {
 		setInterval(function() {
 			getUnread();
-		}, 2000);
+		}, 4000);
 	}
 	function showUnread(result) {
 		$('#unread').html(result);
+	}
+	function passwordCheckFunction(){
+		var userPassword1 = $('#userPassword1').val();
+		var userPassword2 = $('#userPassword2').val();
+		if (userPassword1 != userPassword2) {
+			$('#passwordCheckMessage').html('비밀번호가 서로 일치하지 않습니다.');
+		}else{
+			$('#passwordCheckMessage').html('');
+		}
 	}
 </script>
 </head>
@@ -59,26 +77,10 @@
 		<div class="collapse navbar-collapse"
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="index.jsp">메인</a> <li><a href="find.jsp">친구찾기</a>
+				<li><a href="index.jsp">메인</a> <li><a href="find.jsp">친구찾기</a>
 				<li><a href="box.jsp">메시지함<span id="unread"	class="label label-info"></span></a>
 			</ul>			
-			<%
-				if (userID == null) {
-			%>
-			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown"
-					role="button" aria-haspopup="true" aria-expanded="false">접속하기<span
-						class="caret"></span></a>
-					<ul class="dropdown-menu">				
-						<li><a href="login.jsp">로그인</a></li>
-						<li><a href="join.jsp">회원가입</a></li>
-					</ul>
-				</li>
-			</ul>
-			<%
-				} else {
-			%>
+
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown"
@@ -86,21 +88,53 @@
 						class="caret"></span></a>
 					<ul class="dropdown-menu">				
 						<li><a href="update.jsp">회원정보수정</a></li>
-						<li><a href="profileUpdate.jsp">프로필수정</a></li>
+						<li class="active"><a href="profileUpdate.jsp">프로필수정</a></li>
 						<li><a href="logoutAction.jsp">로그아웃</a></li>
 					</ul>
 				</li>
 			</ul>
 			
-			<%
-				}
-			%>
 		</div>
 	</nav>
 	
+	<div class="container">
+		<form method="post" action="./userProfile" enctype="multipart/form-data">
+			<table class="table table-bordered table-hover" style="text-align:center; border:1px solid #dddddd;">
+				<thead>
+					<tr>
+						<th colspan="2"><h4>프로필 사진 수정 양식</h4></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="width:110px;"><h5>아이디</h5></td>
+						<td><h5><%=user.getUserID() %></h5>
+						<input type="hidden" name="userID" value="<%=user.getUserID() %>"></td>
+					</tr>
+					<tr>
+						<td style="width:110px;"><h5>사진 업로드</h5></td>
+						<td colspan="2">
+							<input type="file" name="userProfile" class="file">
+							<div class="input-group col-xs-12">
+								<span class="input-group-addon"><i class="glyphicon glyphicon-picture"></i></span>
+								<input type="text" class="form-control input-lg" disabled placeholder="이미지를 업로드하세요.">
+								<span class="input-group-btn">
+									<button class="browse btn btn-primary input-lg" type="button"><i class="glyphicon glyphicon-search">파일찾기</i></button>
+								</span> 
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align:left;" colspan="3"><h5 style="color:red;" id="passwordCheckMessage"></h5><input class="btn btn-primary pull-right" type="submit" value="등록"></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
 	
 	
-		<%
+	
+					<%
 						String messageContent = null;
 						if (session.getAttribute("messageContent") != null) {
 							messageContent = (String) session.getAttribute("messageContent");
@@ -170,6 +204,15 @@
 		<%
 			}
 		%>
+		<script type="text/javascript">
+			$(document).on('click','.browse',function(){
+				var file = $(this).parent().parent().parent().find('.file');
+				file.trigger('click');
+			});
+			$(document).on('change','.file',function(){
+				$(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i,''));
+			});
+		</script>
 
 				</body>
 </html>

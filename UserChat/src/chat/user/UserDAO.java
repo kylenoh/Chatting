@@ -101,6 +101,7 @@ public class UserDAO {
 			if (rs.next()) {
 				user.setUserID(userID);
 				user.setUserPassword(rs.getString("userPassword"));
+				user.setUserName(rs.getString("userName"));
 				user.setUserAge(rs.getInt("userAge"));
 				user.setUserGender(rs.getString("userGender"));
 				user.setUserEmail(rs.getString("userEmail"));
@@ -112,5 +113,69 @@ public class UserDAO {
 			DBManager.close(con, pstmt, rs);
 		}
 		return user;	//데이터 베이스 오류
+	}
+	
+	public int update(String userID,String userPassword,String userName,String userAge,String userGender,String userEmail){
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String SQL = "update Chatuser set userPassword =?, userName =?, userAge=?, userGender =?, userEmail=? where userID = ?";
+		try {
+			con = DBManager.connect();
+			pstmt = con.prepareStatement(SQL);
+			pstmt.setString(1, userPassword);
+			pstmt.setString(2, userName);
+			pstmt.setInt(3, Integer.parseInt(userAge));
+			pstmt.setString(4, userGender);
+			pstmt.setString(5, userEmail);
+			pstmt.setString(6, userID);
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			DBManager.close(con, pstmt, null);
+		}
+		return -1;	//데이터 베이스 오류
+	}
+	
+	public int profile(String userID,String userProfile){
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String SQL = "update Chatuser set userProfile = ? where userID = ?";
+		try {
+			con = DBManager.connect();
+			pstmt = con.prepareStatement(SQL);
+			pstmt.setString(1, userProfile);
+			pstmt.setString(2, userID);
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			DBManager.close(con, pstmt, null);
+		}
+		return -1;	//데이터 베이스 오류
+	}
+	
+	public String getProfile(String userID){
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String SQL = "select * from Chatuser where userID = ?";
+		try {
+			con = DBManager.connect();
+			pstmt = con.prepareStatement(SQL);
+			pstmt.setString(1, userID);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				if (rs.getString("userProfile").equals("")) {
+					return "http://172.16.4.155:8888/UserChat/images/icon.jpg";  
+				}
+				return "http://172.16.4.155:8888/UserChat/upload/" + rs.getString("userProfile");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			DBManager.close(con, pstmt, rs);
+		}
+		return "http://172.16.4.155:8888/UserChat/images/icon.jpg";
 	}
 }
